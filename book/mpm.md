@@ -209,45 +209,45 @@ $$
 
 The fixed mass, $M_p$, of the material points implies that the equation of conservation of mass is automatically satisfied. 
 
-Following the finite element method, the weak form of the linear momentum balance equation is obtained by multiplying the momentum conservation equation by a test function, $\delta \mathbf{v}$, and integrating over the current configuration, $\Omega$. At every instant $t$, the velocity field is sought in the trial space $\mathcal{V}$ and the test function is an arbitrary member of the test space $\mathcal{V}_0$,
+Following the finite element method, the weak form of the linear momentum balance equation is obtained by multiplying the momentum conservation equation by a test function (also called a weight function), $\mathbf{w}$, and integrating over the current configuration, $\Omega$. At every instant $t$, the velocity field is sought in the trial space $\mathcal{V}$ and the test function is an arbitrary member of the test space $\mathcal{V}_0$,
 
 $$
 \mathcal{V} = \left\{ \mathbf{v} \in H^1(\Omega) \; : \; \mathbf{v} = \bar{\mathbf{v}} \;\; \text{on} \;\; \partial \Omega_u \right\}, \qquad
-\mathcal{V}_0 = \left\{ \delta \mathbf{v} \in H^1(\Omega) \; : \; \delta \mathbf{v} = \mathbf{0} \;\; \text{on} \;\; \partial \Omega_u \right\}
+\mathcal{V}_0 = \left\{ \mathbf{w} \in H^1(\Omega) \; : \; \mathbf{w} = \mathbf{0} \;\; \text{on} \;\; \partial \Omega_u \right\}
 $$
 
 where $H^1(\Omega)$ is the space of square-integrable functions on $\Omega$ with square-integrable first derivatives, and $\partial \Omega_u$ is the part of the boundary on which the motion is prescribed to be $\bar{\mathbf{v}}$. The weak form reads
 
 $$
-\int_{\Omega} \delta \mathbf{v} \cdot \rho \mathbf{a} \hspace{3pt} d\Omega = \int_{\Omega} \delta \mathbf{v} \cdot (\nabla \cdot \pmb{\sigma}) \hspace{3pt} d\Omega + \int_{\Omega} \delta \mathbf{v}  \cdot \rho \mathbf{b} \hspace{3pt} d\Omega
+\int_{\Omega} \mathbf{w} \cdot \rho \mathbf{a} \hspace{3pt} d\Omega = \int_{\Omega} \mathbf{w} \cdot (\nabla \cdot \pmb{\sigma}) \hspace{3pt} d\Omega + \int_{\Omega} \mathbf{w}  \cdot \rho \mathbf{b} \hspace{3pt} d\Omega
 $$
 
 where $d\Omega$ is the differential volume.
 
-The test function, $\delta \mathbf{v}$, is also expressed using the nodal basis functions:
+The test function, $\mathbf{w}$, is also expressed using the nodal basis functions:
  
 $$
-\delta \mathbf{v} (\mathbf{x},t) = \sum_{i=1}^{n_n} \delta \mathbf{v}_i(t) N_i(\mathbf{x})
+\mathbf{w} (\mathbf{x},t) = \sum_{i=1}^{n_n} \mathbf{w}_i(t) N_i(\mathbf{x})
 $$
 
 Applying integration by parts and the divergence theorem to the term involving the stress, the weak form equation can be rewritten as
 
 $$
-\int_{\Omega} \rho \delta \mathbf{v} \cdot \mathbf{a} \hspace{3pt} d\Omega = -\int_{\Omega} \nabla \delta \mathbf{v} : \pmb{\sigma} \hspace{3pt} d\Omega + \int_{\partial \Omega_\Gamma} \delta \mathbf{v} \hspace{3pt} \cdot \mathbf{t} \hspace{3pt} dS + \int_{\Omega}  \rho \delta \mathbf{v}  \cdot \mathbf{b} \hspace{3pt} d\Omega
+\int_{\Omega} \rho \mathbf{w} \cdot \mathbf{a} \hspace{3pt} d\Omega = -\int_{\Omega} \nabla \mathbf{w} : \pmb{\sigma} \hspace{3pt} d\Omega + \int_{\partial \Omega_\Gamma} \mathbf{w} \hspace{3pt} \cdot \mathbf{t} \hspace{3pt} dS + \int_{\Omega}  \rho \mathbf{w}  \cdot \mathbf{b} \hspace{3pt} d\Omega
 $$
 
 where $dS$ is the differential surface, $\mathbf{t} = \pmb{\sigma} \cdot \mathbf{n}$ is the prescribed surface traction, $\mathbf{n}$ is the unit normal vector to the boundary, and $\partial \Omega_\Gamma = \partial \Omega \setminus \partial \Omega_u$ is the part of the boundary on which tractions are prescribed. The boundary integral appears only over $\partial \Omega_\Gamma$ because the test function vanishes on $\partial \Omega_u$.
 
-Substituting the approximation of the acceleration field, $\mathbf{a} = \sum_{j=1}^{n_n} N_j \mathbf{a}_j$, and of the test function, $\delta \mathbf{v} = \sum_{i=1}^{n_n} N_i \delta \mathbf{v}_i$, into the weak form equation, moving all terms to one side, and collecting the terms that multiply each nodal value $\delta \mathbf{v}_i$ gives
+Substituting the approximation of the acceleration field, $\mathbf{a} = \sum_{j=1}^{n_n} N_j \mathbf{a}_j$, and of the test function, $\mathbf{w} = \sum_{i=1}^{n_n} N_i \mathbf{w}_i$, into the weak form equation, moving all terms to one side, and collecting the terms that multiply each nodal value $\mathbf{w}_i$ gives
 
 $$
 \begin{aligned}
-\sum_{i=1}^{n_n} \delta \mathbf{v}_i(t) \cdot \bigg[ & \sum_{j=1}^{n_n} \int_{\Omega} \rho N_i(\mathbf{x}) N_j(\mathbf{x}) \hspace{3pt} d\Omega \; \mathbf{a}_j(t) + \int_{\Omega} \nabla N_i(\mathbf{x}) : \pmb{\sigma} (\mathbf{x},t) \hspace{3pt} d\Omega \\
+\sum_{i=1}^{n_n} \mathbf{w}_i(t) \cdot \bigg[ & \sum_{j=1}^{n_n} \int_{\Omega} \rho N_i(\mathbf{x}) N_j(\mathbf{x}) \hspace{3pt} d\Omega \; \mathbf{a}_j(t) + \int_{\Omega} \nabla N_i(\mathbf{x}) : \pmb{\sigma} (\mathbf{x},t) \hspace{3pt} d\Omega \\
 & - \int_{\partial \Omega_\Gamma} N_i(\mathbf{x}) \mathbf{t}(\mathbf{x},t) \hspace{3pt} dS - \int_{\Omega} \rho N_i(\mathbf{x}) \mathbf{b}(\mathbf{x},t) \hspace{3pt} d\Omega \bigg] = 0
 \end{aligned}
 $$
 
-The weak form must hold for *every* test function in $\mathcal{V}_0$ — that is, for an arbitrary choice of the nodal values $\delta \mathbf{v}_i$. Choosing $\delta \mathbf{v}_i$ to be non-zero at a single node at a time forces each bracketed term to vanish individually. This is how the test function is eliminated: it leaves one equation for every node $i$,
+The weak form must hold for *every* test function in $\mathcal{V}_0$ — that is, for an arbitrary choice of the nodal values $\mathbf{w}_i$. Choosing $\mathbf{w}_i$ to be non-zero at a single node at a time forces each bracketed term to vanish individually. This is how the test function is eliminated: it leaves one equation for every node $i$,
 
 $$
 \begin{aligned}
