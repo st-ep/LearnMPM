@@ -1,0 +1,912 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>An introduction to the Material Point Method &#8212; Learn MPM</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'mpm';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="MPM stress update schemes" href="mpm-schemes.html" />
+    <link rel="prev" title="Welcome to learn MPM with Python" href="intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Learn MPM - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Learn MPM - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Welcome to learn MPM with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">An introduction to the Material Point Method</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mpm-schemes.html">MPM stress update schemes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="usf.html">Update Stress First (USF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usl.html">Update Stress Last (USL)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="update.html">Update</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="point-axial-vibration1d.html">Axial vibration of a 1D bar with a single material point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="axial-vibration1d.html">Axial vibration of a 1D bar (multiple material points)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mpm2d-column-collapse.html">Problem</a></li>
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="mpm2d-elastic-ball.html">Practice-1: elastic body collision</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mpm-code.html">Coding 1D MPM</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="learnmpm-axial-vibration1d.html">Axial vibration of 1D bar using LearnMPM</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="designsafe-mpm.html">Running MPM on DesignSafe</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/geoelements/learn-mpm" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/geoelements/learn-mpm/issues/new?title=Issue%20on%20page%20%2Fmpm.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/mpm.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>An introduction to the Material Point Method</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motion-of-deformable-body">Motion of deformable body</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#governing-equations">Governing equations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-form-and-spatial-discretisation">Weak form and spatial discretisation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-integration-and-numerical-implementation">Time integration and numerical implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conservation-properties">Conservation properties</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="an-introduction-to-the-material-point-method">
+<h1>An introduction to the Material Point Method<a class="headerlink" href="#an-introduction-to-the-material-point-method" title="Link to this heading">#</a></h1>
+<p>In continuum mechanics, there are two main descriptions of material motion: Lagrangian and Eulerian.
+The Lagrangian (material) description uses the initial configuration (i.e. at time, <span class="math notranslate nohighlight">\(t = 0\)</span>) to describe the physical quantities and the deformation state of a continuum body. So, the emphasis is given to individual particles in Lagrangian kinematic description.
+On the other hand, the Eulerian (or spatial) approach describes the motion of a continuum body with respect to the current coordinates and time.
+The spatial description therefore focuses on a specific position in space at current time.</p>
+<p>The Material Point Method (MPM) is a hybrid Eulerian-Lagrangian approach, which uses moving material points on  a fixed computational background grid.
+The MPM is a particle based method that represents the material as a collection of material points, and their deformations are determined by Newton’s laws of motion.
+This approach is very effective particularly in the context of large deformations.</p>
+<p><img alt="algorithm" src="_images/mpm-algorithm.png" /></p>
+<blockquote>
+<div><p>Illustration of the MPM algorithm: (1) A representation of material points overlaid on a computational grid.
+Arrows represent material point state vectors (mass, volume, velocity, etc.) being projected to the nodes of the computational grid.
+(2) The equations of motion are solved onto the nodes, resulting in updated nodal velocities and positions.
+(3) The updated nodal kinematics are interpolated back to the material points.
+(4) The state of the material points is updated, and the
+computational grid is reset</p>
+</div></blockquote>
+<section id="motion-of-deformable-body">
+<h2>Motion of deformable body<a class="headerlink" href="#motion-of-deformable-body" title="Link to this heading">#</a></h2>
+<p>It is essential to consider a proper description of motion in finite deformation analysis. In fact, material point method describes the behaviour of a deformable body in an updated Lagrangian frame.</p>
+<p><img alt="motion of deformable body" src="_images/motion-of-a-deformable-body.png" /></p>
+<blockquote>
+<div><p>Motion of a deformable body in continuum mechanics</p>
+</div></blockquote>
+<p>The figure shows the general motion of a continuum body. The material particles are labelled with the position <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> at their initial configuration (time <span class="math notranslate nohighlight">\(t = 0\)</span>). At current configuration at time <span class="math notranslate nohighlight">\(t = t\)</span>, these particles are located at positions <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>. Motion between the initial and the current positions is mathematically described by a mapping function, <span class="math notranslate nohighlight">\(\phi\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x} = \phi (\mathbf{X},t)\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{X} = \phi (\mathbf{X},0)\]</div>
+<p>Despite the fact that the equations are solved in a Lagrangian framework, the spatial quantities in MPM are expressed in terms of the spatial position, <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>. Hence, the displacement, <span class="math notranslate nohighlight">\(\mathbf{u}(\mathbf{x},t)\)</span>, velocity, <span class="math notranslate nohighlight">\(\mathbf{v}(\mathbf{x},t)\)</span> and the acceleration, <span class="math notranslate nohighlight">\(\mathbf{a}(\mathbf{x},t)\)</span> can be defined as</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{u}(\mathbf{x},t) = \mathbf{x} - \mathbf{X}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{v}(\mathbf{x},t) = \dfrac{d \mathbf{u}}{dt} (\mathbf{x},t)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{a}(\mathbf{x},t) = \dfrac{d \mathbf{v}}{dt} (\mathbf{x},t)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dfrac{d}{dt} = \dfrac{\partial}{\partial t} + \mathbf{v} \cdot \nabla\)</span> is the material time derivative.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">What is the material time derivative?</p>
+<p>The material time derivative answers the question: <em>how fast does a quantity change for a particular material particle while that particle moves through space?</em></p>
+<p>Suppose <span class="math notranslate nohighlight">\(f(\mathbf{x},t)\)</span> is any field — for example temperature, density, displacement, or velocity. A material particle follows a trajectory <span class="math notranslate nohighlight">\(\mathbf{x}_p(t)\)</span>, moving with the local velocity of the material:</p>
+<div class="math notranslate nohighlight">
+\[
+\dfrac{d \mathbf{x}_p}{dt} = \mathbf{v}(\mathbf{x}_p(t),t)
+\]</div>
+<p>The value of the field observed by that particle is</p>
+<div class="math notranslate nohighlight">
+\[
+f_p(t) = f(\mathbf{x}_p(t),t)
+\]</div>
+<p>Applying the chain rule gives</p>
+<div class="math notranslate nohighlight">
+\[
+\dfrac{d f_p}{dt} = \dfrac{\partial f}{\partial t} + \dfrac{d \mathbf{x}_p}{dt} \cdot \nabla f
+\]</div>
+<p>Since <span class="math notranslate nohighlight">\(d \mathbf{x}_p/dt = \mathbf{v}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\boxed{\dfrac{d f}{dt} = \dfrac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f}
+\]</div>
+<p>The first term, <span class="math notranslate nohighlight">\(\partial f/\partial t\)</span>, is the local rate of change seen at a fixed point in space; the second term, <span class="math notranslate nohighlight">\(\mathbf{v} \cdot \nabla f\)</span>, is the convective rate of change the particle experiences because the flow carries it into regions where <span class="math notranslate nohighlight">\(f\)</span> is different. For example, applying the material time derivative to the velocity field gives the acceleration defined above:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{a}(\mathbf{x},t) = \dfrac{d \mathbf{v}}{dt} = \dfrac{\partial \mathbf{v}}{\partial t} + (\mathbf{v} \cdot \nabla) \mathbf{v}
+\]</div>
+<p>Many texts denote the material time derivative by <span class="math notranslate nohighlight">\(D/Dt\)</span> to distinguish it from an ordinary time derivative.</p>
+</div>
+<p>In large deformation analysis with inelastic material behaviour, it is usually difficult to follow the deformation history. Hence, the material motion is usually described in terms of small increments of the deformation and the stress-strain relationships are defined in incremental form. The symmetric small strain tensor, <span class="math notranslate nohighlight">\(\pmb{\epsilon}\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[\pmb{\epsilon} = \dfrac{1}{2} \big( \nabla \mathbf{u} + (\nabla \mathbf{u})^T \big)\]</div>
+<p>with its rectangular Cartesian components</p>
+<div class="math notranslate nohighlight">
+\[
+\pmb{\epsilon}_{ij} = \dfrac{1}{2} \bigg( \dfrac{\partial \mathbf{u}_i}{\partial \mathbf{x}_j} + \dfrac{\partial \mathbf{u}_j}{\partial \mathbf{x}_i} \bigg)
+\]</div>
+<div class="dropdown admonition">
+<p class="admonition-title">Why is strain defined this way?</p>
+<p>Strain must measure <em>shape change</em> only — rigid motions deform nothing and must produce no stress. All local relative motion is contained in the displacement gradient <span class="math notranslate nohighlight">\(\nabla \mathbf{u}\)</span>, and its symmetric and antisymmetric parts separate the two effects:</p>
+<div class="math notranslate nohighlight">
+\[
+\nabla \mathbf{u} = \underbrace{\dfrac{1}{2} \big( \nabla \mathbf{u} + (\nabla \mathbf{u})^T \big)}_{\pmb{\epsilon} \;\; \text{(deformation)}} + \underbrace{\dfrac{1}{2} \big( \nabla \mathbf{u} - (\nabla \mathbf{u})^T \big)}_{\pmb{\omega} \;\; \text{(rigid rotation)}}
+\]</div>
+<p>Quick check: a small rigid rotation by <span class="math notranslate nohighlight">\(\theta\)</span> displaces points by <span class="math notranslate nohighlight">\(\mathbf{u} = (-\theta y, \, \theta x)\)</span>, so <span class="math notranslate nohighlight">\(\nabla \mathbf{u} = \left[\begin{smallmatrix} 0 &amp; -\theta \\ \theta &amp; 0 \end{smallmatrix}\right]\)</span> is purely antisymmetric and <span class="math notranslate nohighlight">\(\pmb{\epsilon} = \mathbf{0}\)</span> — no strain, hence no stress. Keeping only the symmetric part is what makes the stress–strain law immune to rigid rotations; the factor <span class="math notranslate nohighlight">\(\frac{1}{2}\)</span> is just the averaging of <span class="math notranslate nohighlight">\(\nabla \mathbf{u}\)</span> with its transpose.</p>
+<p>What remains has a direct geometric meaning: diagonal terms of <span class="math notranslate nohighlight">\(\pmb{\epsilon}\)</span> are stretches per unit length (<span class="math notranslate nohighlight">\(\epsilon_{xx} = \partial u_x/\partial x\)</span>; in 1D simply <span class="math notranslate nohighlight">\(\epsilon = du/dx\)</span>), and off-diagonal terms measure changes of angles (shear).</p>
+<p>This <em>small</em>-strain form assumes <span class="math notranslate nohighlight">\(|\nabla \mathbf{u}| \ll 1\)</span>. MPM handles large deformations by applying it <em>incrementally</em>: within one time step the added deformation is small, so the strain increment <span class="math notranslate nohighlight">\(\Delta \pmb{\epsilon}\)</span> stays valid even when the total deformation is large.</p>
+</div>
+<p>In the viscous behaviour of materials or in most plasticity theories, the equations are generally formulated in terms of the rate of deformation. The rate of deformation tensor is defined as</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{D} = \dfrac{1}{2} \big(L + L^T \big)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(L = \nabla \mathbf{v}\)</span> is the velocity gradient.</p>
+<p>The rectangular Cartesian components of the rate of deformation tensor are given by</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{D}_{ij} = \dfrac{1}{2} \bigg( \dfrac{\partial \mathbf{v}_i}{\partial \mathbf{x}_j} + \dfrac{\partial \mathbf{v}_j}{\partial \mathbf{x}_i} \bigg)
+\]</div>
+</section>
+<section id="governing-equations">
+<h2>Governing equations<a class="headerlink" href="#governing-equations" title="Link to this heading">#</a></h2>
+<p>Material motion is mathematically represented by the conservation laws expressed in differential form. For the problems considered in this book, the governing equations include only the conservation of mass and momentum.</p>
+<p>The conservation of mass, which is also referred to as the continuity equation, states that the mass of a closed system (i.e. a system that does not exchange matter with its surroundings) must remain constant.</p>
+<div class="math notranslate nohighlight">
+\[
+\dfrac{d \rho}{dt} + \rho \nabla \cdot \mathbf{v} = 0
+\]</div>
+<p>The linear momentum balance equation is also called as the equation of motion and it is derived by applying the Newton’s second law to a continuum body.</p>
+<div class="math notranslate nohighlight">
+\[
+\rho \dfrac{d \mathbf{v}}{dt} = \nabla \cdot \pmb{\sigma} + \rho \mathbf{b}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho(\mathbf{x},t)\)</span> is the mass density, <span class="math notranslate nohighlight">\(\pmb{\sigma}(\mathbf{x},t)\)</span> is the symmetric Cauchy stress tensor and <span class="math notranslate nohighlight">\(\mathbf{b}(\mathbf{x},t)\)</span> is the external body force per unit mass.</p>
+</section>
+<section id="weak-form-and-spatial-discretisation">
+<h2>Weak form and spatial discretisation<a class="headerlink" href="#weak-form-and-spatial-discretisation" title="Link to this heading">#</a></h2>
+<p>MPM describes the whole material domain, <span class="math notranslate nohighlight">\(\Omega\)</span> with a set of Lagrangian material points that are tracked throughout the deformation process.
+An Eulerian grid is used to solve the equation of motion.
+In the figure below, the grey circles are the material points <span class="math notranslate nohighlight">\(\mathbf{x}_{p}\)</span>, where <em>p</em> represents a material point, and the computational nodes are the points of intersection of the grid (denoted as <span class="math notranslate nohighlight">\(\mathbf{x}_{i}\)</span>, where <em>i</em> represents a computational node).
+The MPM involves discretising the domain, <span class="math notranslate nohighlight">\(\Omega\)</span>, with a set of material points.
+The material points are assigned an initial value of position, velocity, mass, volume, and stress, denoted as
+<span class="math notranslate nohighlight">\(\mathbf{x}_{p}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{v}_{p}\)</span>, <span class="math notranslate nohighlight">\(M_{p}\)</span>, <span class="math notranslate nohighlight">\(V_{p}\)</span>, and <span class="math notranslate nohighlight">\(\pmb{\sigma}_{p}\)</span>.
+Depending on the material being simulated, additional parameters, like pressure, temperature, pore-water pressure, etc., are specified at the material points.
+The material points are assumed to be within the computational grid which for ease of computation, is assumed to be a Cartesian lattice.
+At every time step <span class="math notranslate nohighlight">\(\mathit{t}_{k}\)</span>, the MPM computation cycle involves projecting the data, such as mass and velocity (momentum), from the material points to the computational grid using the standard nodal basis functions, called the <em>shape functions</em>, derived from the position of the particle with respect to the grid.
+Gradient terms are calculated on the computational grid, and the governing equation, i.e. the equation of motion, is solved with the updated position and velocity values mapping back to the material points.
+The mesh is reinitialised to its original state and the computational cycle is repeated.</p>
+<p>The material domain is discretized into <span class="math notranslate nohighlight">\(n_p\)</span> material points in its initial configuration, <span class="math notranslate nohighlight">\(\Omega^0\)</span>, with positions <span class="math notranslate nohighlight">\(\mathbf{x}_p^0\)</span> at time <span class="math notranslate nohighlight">\(t=0\)</span> — these initial positions serve as the material coordinates of the points — and <span class="math notranslate nohighlight">\(\mathbf{x}_p^t\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> <span class="math notranslate nohighlight">\((p = 1, 2, ..., n_p)\)</span>. Each material point represents an infinitesimal mass element with a fixed mass <span class="math notranslate nohighlight">\(M_p\)</span> throughout the computation. Hence, mass density can be expressed as</p>
+<div class="math notranslate nohighlight">
+\[
+\rho(\mathbf{x},t) = \sum_{p=1}^{n_p} M_p \delta (\mathbf{x} - \mathbf{x}_p^t)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta\)</span> is the Dirac delta function.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Why can the density be written this way?</p>
+<p>Each material point represents a small piece of the body whose mass <span class="math notranslate nohighlight">\(M_p\)</span> is imagined to be concentrated entirely at the single moving location <span class="math notranslate nohighlight">\(\mathbf{x}_p^t\)</span>. The density of such a point mass must be zero everywhere except at <span class="math notranslate nohighlight">\(\mathbf{x}_p^t\)</span>, yet its integral over any region containing the point must return the full mass <span class="math notranslate nohighlight">\(M_p\)</span> — exactly the defining property of the scaled Dirac delta <span class="math notranslate nohighlight">\(M_p \delta(\mathbf{x} - \mathbf{x}_p^t)\)</span>. Summing over all points gives the density of the whole discretized body.</p>
+<p>This expression carries the correct mass everywhere: integrating it over any region <span class="math notranslate nohighlight">\(V\)</span> picks up exactly the masses of the points currently inside that region,</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{V} \rho(\mathbf{x},t) \hspace{3pt} d\Omega = \sum_{p=1}^{n_p} M_p \int_{V} \delta(\mathbf{x} - \mathbf{x}_p^t) \hspace{3pt} d\Omega = \sum_{\mathbf{x}_p^t \in V} M_p
+\]</div>
+<p>and mass conservation is automatic: each <span class="math notranslate nohighlight">\(M_p\)</span> is a constant, and the deltas simply travel with the points.</p>
+<p>Strictly, <span class="math notranslate nohighlight">\(\delta\)</span> is not a function but a <em>distribution</em> — it only acquires meaning under an integral. That is exactly how it is used on this page: the weak form below consists of integrals, and this representation is what later collapses them into sums over the material points.</p>
+</div>
+<p><img alt="MPM discretization" src="_images/mpm-discretization.png" /></p>
+<p>The background mesh consists of a total number of nodes, <span class="math notranslate nohighlight">\(n_n\)</span> that are located at <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span> with shape functions <span class="math notranslate nohighlight">\(N_i(\mathbf{x})\)</span> (<span class="math notranslate nohighlight">\(i = 1,2,...,n_n\)</span>). The position, displacement, velocity and acceleration at any point in the continuum body are approximated using the shape functions similar to the finite element method.</p>
+<p>The coordinates of a point at any given time are approximated using the nodal basis functions as</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{x} = \sum_{i=1}^{n_n} \mathbf{x}_i N_i(\mathbf{x})
+\]</div>
+<p>Similarly, the displacement, velocity and acceleration fields of a point in the material domain at any given time <span class="math notranslate nohighlight">\(t\)</span> can be approximated by</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{u} (\mathbf{x},t) = \sum_{i=1}^{n_n} \mathbf{u}_i(t) N_i(\mathbf{x})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{v} (\mathbf{x},t) = \sum_{i=1}^{n_n} \mathbf{v}_i(t) N_i(\mathbf{x})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{a} (\mathbf{x},t) = \sum_{i=1}^{n_n} \mathbf{a}_i(t) N_i(\mathbf{x})
+\]</div>
+<p>The fixed mass, <span class="math notranslate nohighlight">\(M_p\)</span>, of the material points implies that the equation of conservation of mass is automatically satisfied.</p>
+<p>Following the finite element method, the weak form of the linear momentum balance equation is obtained by multiplying the momentum conservation equation by a test function (also called a weight function), <span class="math notranslate nohighlight">\(\mathbf{w}\)</span>, and integrating over the current configuration, <span class="math notranslate nohighlight">\(\Omega\)</span>. At every instant <span class="math notranslate nohighlight">\(t\)</span>, the velocity field is sought in the trial space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> and the test function is an arbitrary member of the test space <span class="math notranslate nohighlight">\(\mathcal{V}_0\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{V} = \left\{ \mathbf{v} \in H^1(\Omega) \; : \; \mathbf{v} = \bar{\mathbf{v}} \;\; \text{on} \;\; \partial \Omega_u \right\}, \qquad
+\mathcal{V}_0 = \left\{ \mathbf{w} \in H^1(\Omega) \; : \; \mathbf{w} = \mathbf{0} \;\; \text{on} \;\; \partial \Omega_u \right\}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(H^1(\Omega)\)</span> is the space of square-integrable functions on <span class="math notranslate nohighlight">\(\Omega\)</span> with square-integrable first derivatives, and <span class="math notranslate nohighlight">\(\partial \Omega_u\)</span> is the part of the boundary on which the motion is prescribed to be <span class="math notranslate nohighlight">\(\bar{\mathbf{v}}\)</span>. The weak form reads</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \mathbf{w} \cdot \rho \mathbf{a} \hspace{3pt} d\Omega = \int_{\Omega} \mathbf{w} \cdot (\nabla \cdot \pmb{\sigma}) \hspace{3pt} d\Omega + \int_{\Omega} \mathbf{w}  \cdot \rho \mathbf{b} \hspace{3pt} d\Omega
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(d\Omega\)</span> is the differential volume.</p>
+<p>The test function, <span class="math notranslate nohighlight">\(\mathbf{w}\)</span>, is also expressed using the nodal basis functions:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{w} (\mathbf{x},t) = \sum_{i=1}^{n_n} \mathbf{w}_i(t) N_i(\mathbf{x})
+\]</div>
+<p>Applying integration by parts and the divergence theorem to the term involving the stress, the weak form equation can be rewritten as</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \rho \mathbf{w} \cdot \mathbf{a} \hspace{3pt} d\Omega = -\int_{\Omega} \nabla \mathbf{w} : \pmb{\sigma} \hspace{3pt} d\Omega + \int_{\partial \Omega_\Gamma} \mathbf{w} \hspace{3pt} \cdot \mathbf{t} \hspace{3pt} dS + \int_{\Omega}  \rho \mathbf{w}  \cdot \mathbf{b} \hspace{3pt} d\Omega
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(dS\)</span> is the differential surface, <span class="math notranslate nohighlight">\(\mathbf{t} = \pmb{\sigma} \cdot \mathbf{n}\)</span> is the prescribed surface traction, <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> is the unit normal vector to the boundary, and <span class="math notranslate nohighlight">\(\partial \Omega_\Gamma = \partial \Omega \setminus \partial \Omega_u\)</span> is the part of the boundary on which tractions are prescribed. The boundary integral appears only over <span class="math notranslate nohighlight">\(\partial \Omega_\Gamma\)</span> because the test function vanishes on <span class="math notranslate nohighlight">\(\partial \Omega_u\)</span>.</p>
+<p>Substituting the approximation of the acceleration field, <span class="math notranslate nohighlight">\(\mathbf{a} = \sum_{j=1}^{n_n} N_j \mathbf{a}_j\)</span>, and of the test function, <span class="math notranslate nohighlight">\(\mathbf{w} = \sum_{i=1}^{n_n} N_i \mathbf{w}_i\)</span>, into the weak form equation, moving all terms to one side, and collecting the terms that multiply each nodal value <span class="math notranslate nohighlight">\(\mathbf{w}_i\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\sum_{i=1}^{n_n} \mathbf{w}_i(t) \cdot \bigg[ &amp; \sum_{j=1}^{n_n} \int_{\Omega} \rho N_i(\mathbf{x}) N_j(\mathbf{x}) \hspace{3pt} d\Omega \; \mathbf{a}_j(t) + \int_{\Omega} \nabla N_i(\mathbf{x}) : \pmb{\sigma} (\mathbf{x},t) \hspace{3pt} d\Omega \\
+&amp; - \int_{\partial \Omega_\Gamma} N_i(\mathbf{x}) \mathbf{t}(\mathbf{x},t) \hspace{3pt} dS - \int_{\Omega} \rho N_i(\mathbf{x}) \mathbf{b}(\mathbf{x},t) \hspace{3pt} d\Omega \bigg] = 0
+\end{aligned}
+\end{split}\]</div>
+<p>The weak form must hold for <em>every</em> test function in <span class="math notranslate nohighlight">\(\mathcal{V}_0\)</span> — that is, for an arbitrary choice of the nodal values <span class="math notranslate nohighlight">\(\mathbf{w}_i\)</span>. Choosing <span class="math notranslate nohighlight">\(\mathbf{w}_i\)</span> to be non-zero at a single node at a time forces each bracketed term to vanish individually. This is how the test function is eliminated: it leaves one equation for every node <span class="math notranslate nohighlight">\(i\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\sum_{j=1}^{n_n} \int_{\Omega} \rho N_i(\mathbf{x}) N_j(\mathbf{x}) \hspace{3pt} d\Omega \; \mathbf{a}_j(t) = &amp; -\int_{\Omega} \nabla N_i(\mathbf{x}) : \pmb{\sigma} (\mathbf{x},t) \hspace{3pt} d\Omega \\
+&amp; + \int_{\partial \Omega_\Gamma} N_i(\mathbf{x}) \mathbf{t}(\mathbf{x},t) \hspace{3pt}dS \\
+&amp; + \int_{\Omega} \rho N_i(\mathbf{x}) \mathbf{b}(\mathbf{x},t) \hspace{3pt} d\Omega, \qquad i = 1, 2, \ldots, n_n
+\end{aligned}
+\end{split}\]</div>
+<p>In contrast to the Gauss quadrature used in FEM, MPM uses the locations of the material points as the integration points. Recall that the mass density is represented by point masses, <span class="math notranslate nohighlight">\(\rho(\mathbf{x},t) = \sum_{p=1}^{n_p} M_p \delta (\mathbf{x} - \mathbf{x}_p^t)\)</span>. Substituting this density into any density-weighted integral collapses it into a sum over the material points:</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \rho(\mathbf{x},t) \, g(\mathbf{x}) \hspace{3pt} d\Omega = \sum_{p=1}^{n_p} M_p \, g(\mathbf{x}_p)
+\]</div>
+<p>for an arbitrary field <span class="math notranslate nohighlight">\(g(\mathbf{x})\)</span>. This takes care of the inertia and the body force terms, which both contain the density <span class="math notranslate nohighlight">\(\rho\)</span>.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Why does the integral collapse to a sum?</p>
+<p>The defining (<em>sifting</em>) property of the Dirac delta function is that integrating any function against it samples that function at the point where the delta is centred:</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \delta(\mathbf{x} - \mathbf{x}_p) \, g(\mathbf{x}) \hspace{3pt} d\Omega = g(\mathbf{x}_p)
+\]</div>
+<p>Substituting <span class="math notranslate nohighlight">\(\rho(\mathbf{x},t) = \sum_{p=1}^{n_p} M_p \delta(\mathbf{x} - \mathbf{x}_p)\)</span> into the density-weighted integral, then moving the sum and the constant masses <span class="math notranslate nohighlight">\(M_p\)</span> outside the integral and applying the sifting property to each term:</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \rho(\mathbf{x},t) \, g(\mathbf{x}) \hspace{3pt} d\Omega
+= \sum_{p=1}^{n_p} M_p \int_{\Omega} \delta(\mathbf{x} - \mathbf{x}_p) \, g(\mathbf{x}) \hspace{3pt} d\Omega
+= \sum_{p=1}^{n_p} M_p \, g(\mathbf{x}_p)
+\]</div>
+<p>Physically: all the mass sits in point lumps <span class="math notranslate nohighlight">\(M_p\)</span>, so integrating a field against the mass distribution simply samples the field at each particle position, weighted by that particle’s mass.</p>
+</div>
+<p>The internal force term, <span class="math notranslate nohighlight">\(\int_{\Omega} \nabla N_i : \pmb{\sigma} \hspace{3pt} d\Omega\)</span>, contains no density, so the point-mass substitution cannot be applied to it. It is instead approximated in the same way as a Riemann sum: the body is divided into small pieces, each represented by one material point occupying a volume <span class="math notranslate nohighlight">\(V_p\)</span>, and the integrand is sampled at the material point locations,</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} g(\mathbf{x}) \hspace{3pt} d\Omega \approx \sum_{p=1}^{n_p} V_p \, g(\mathbf{x}_p)
+\]</div>
+<p>Unlike the point-mass substitution, this is an approximation; its accuracy improves with the number of material points per cell. Finally, the surface traction term needs neither rule — it is an integral over the boundary <span class="math notranslate nohighlight">\(\partial \Omega_\Gamma\)</span>, not over the volume of the body, and is evaluated separately where tractions are prescribed.</p>
+<p>Applying these rules to each term of the nodal momentum equation above turns it into the <em>semi-discrete</em> momentum equation — discrete in space but still continuous in time, with the nodal accelerations <span class="math notranslate nohighlight">\(\mathbf{a}_j(t)\)</span> as the unknowns:</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_{j=1}^{n_n} M_{ij} \mathbf{a}_j = \mathbf{F}_i^{int} + \mathbf{F}_i^{ext}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(M_{ij}\)</span> is the consistent mass matrix, <span class="math notranslate nohighlight">\(\mathbf{F}_i^{int}\)</span> is the internal force vector and <span class="math notranslate nohighlight">\(\mathbf{F}_i^{ext}\)</span> is the external force vector.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Applying the rules term by term</p>
+<p>Take the nodal momentum equation and treat each of its four terms separately.</p>
+<p><strong>Inertia term</strong> — contains <span class="math notranslate nohighlight">\(\rho\)</span>, so the point-mass rule applies with <span class="math notranslate nohighlight">\(g = N_i N_j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \rho N_i N_j \hspace{3pt} d\Omega = \sum_{p=1}^{n_p} M_p N_i(\mathbf{x}_p) N_j(\mathbf{x}_p) = M_{ij}
+\]</div>
+<p>so the left-hand side becomes <span class="math notranslate nohighlight">\(\sum_{j} M_{ij} \mathbf{a}_j\)</span>.</p>
+<p><strong>Stress term</strong> — no density, so the volume rule applies with <span class="math notranslate nohighlight">\(g = \nabla N_i : \pmb{\sigma}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+-\int_{\Omega} \nabla N_i : \pmb{\sigma} \hspace{3pt} d\Omega \approx -\sum_{p=1}^{n_p} V_p \, \nabla N_i(\mathbf{x}_p) : \pmb{\sigma}(\mathbf{x}_p,t) = \mathbf{F}_i^{int}
+\]</div>
+<p><strong>Body force term</strong> — contains <span class="math notranslate nohighlight">\(\rho\)</span>, so the point-mass rule applies with <span class="math notranslate nohighlight">\(g = N_i \mathbf{b}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\int_{\Omega} \rho N_i \mathbf{b} \hspace{3pt} d\Omega = \sum_{p=1}^{n_p} M_p N_i(\mathbf{x}_p) \mathbf{b}(\mathbf{x}_p,t)
+\]</div>
+<p><strong>Traction term</strong> — a boundary integral, left as it is: <span class="math notranslate nohighlight">\(\int_{\partial \Omega_\Gamma} N_i \mathbf{t} \hspace{3pt} dS\)</span>.</p>
+<p>The last two terms together form the external force vector <span class="math notranslate nohighlight">\(\mathbf{F}_i^{ext}\)</span>. Collecting the four results reproduces the semi-discrete momentum equation with exactly the <span class="math notranslate nohighlight">\(M_{ij}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{F}_i^{int}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{F}_i^{ext}\)</span> defined below.</p>
+</div>
+<p>The consistent mass matrix is given by</p>
+<div class="math notranslate nohighlight">
+\[
+M_{ij} = \sum_{p=1}^{n_p} N_i(\mathbf{x}_p) N_j(\mathbf{x}_p) M_p
+\]</div>
+<p>The internal force vector computed at the grid nodes is written as</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{F}_i^{int} = - \sum_{p=1}^{n_p} \nabla N_i(\mathbf{x}_p) : \pmb{\sigma}(\mathbf{x}_p,t) V_p
+\]</div>
+<p>and the external force vector is</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{F}_i^{ext} = \int_{\partial \Omega_\Gamma} N_i(\mathbf{x}) \mathbf{t} (\mathbf{x},t) \hspace{3pt} dS + \sum_{p=1}^{n_p} N_i(\mathbf{x}_p) \mathbf{b}(\mathbf{x}_p,t)M_p
+\]</div>
+<p>The mass matrix is called <em>consistent</em> because it is derived from the same shape functions used to discretise the weak form.</p>
+<p>To advance the solution in time, the semi-discrete momentum equation must be solved for the nodal accelerations: at any given instant the state of the material points is known, so <span class="math notranslate nohighlight">\(M_{ij}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{F}_i^{int}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{F}_i^{ext}\)</span> can all be computed — the accelerations <span class="math notranslate nohighlight">\(\mathbf{a}_j\)</span> are the only unknowns. Writing out the sum for a single node <span class="math notranslate nohighlight">\(i\)</span> makes the difficulty visible:</p>
+<div class="math notranslate nohighlight">
+\[
+M_{i1} \mathbf{a}_1 + M_{i2} \mathbf{a}_2 + \cdots + M_{i\,n_n} \mathbf{a}_{n_n} = \mathbf{F}_i^{int} + \mathbf{F}_i^{ext}
+\]</div>
+<p>This one equation contains several unknowns at once: every <span class="math notranslate nohighlight">\(\mathbf{a}_j\)</span> whose coefficient <span class="math notranslate nohighlight">\(M_{ij}\)</span> is non-zero, which happens whenever nodes <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> share a cell containing a material point — only then are <span class="math notranslate nohighlight">\(N_i\)</span> and <span class="math notranslate nohighlight">\(N_j\)</span> both non-zero at the same position <span class="math notranslate nohighlight">\(\mathbf{x}_p\)</span>, making <span class="math notranslate nohighlight">\(M_{ij} = \sum_p N_i(\mathbf{x}_p) N_j(\mathbf{x}_p) M_p \neq 0\)</span>. The acceleration of node <span class="math notranslate nohighlight">\(i\)</span> therefore cannot be computed from its own equation alone: to isolate <span class="math notranslate nohighlight">\(\mathbf{a}_i\)</span>, the accelerations of the neighbouring nodes would already have to be known — but they are unknowns themselves, determined by their own equations, which in turn involve <em>their</em> neighbours, and so on across the whole mesh. The equations of all <span class="math notranslate nohighlight">\(n_n\)</span> nodes must instead be solved simultaneously as a linear system</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix} M_{11} &amp; M_{12} &amp; \cdots &amp; M_{1\,n_n} \\ M_{21} &amp; M_{22} &amp; \cdots &amp; M_{2\,n_n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ M_{n_n\,1} &amp; M_{n_n\,2} &amp; \cdots &amp; M_{n_n\,n_n} \end{bmatrix}
+\begin{bmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_{n_n} \end{bmatrix}
+=
+\begin{bmatrix} \mathbf{F}_1^{int} + \mathbf{F}_1^{ext} \\ \mathbf{F}_2^{int} + \mathbf{F}_2^{ext} \\ \vdots \\ \mathbf{F}_{n_n}^{int} + \mathbf{F}_{n_n}^{ext} \end{bmatrix}
+\end{split}\]</div>
+<p>which would have to be assembled and solved anew at every time step, because <span class="math notranslate nohighlight">\(M_{ij}\)</span> depends on the material point positions, and these change as the material points move through the mesh.</p>
+<p>In the standard MPM formulation this expense is avoided by a deliberate approximation called mass <em>lumping</em>. In the row of node <span class="math notranslate nohighlight">\(i\)</span>, every unknown neighbouring acceleration <span class="math notranslate nohighlight">\(\mathbf{a}_j\)</span> is replaced by the acceleration <span class="math notranslate nohighlight">\(\mathbf{a}_i\)</span> of node <span class="math notranslate nohighlight">\(i\)</span> itself — a small error whenever the acceleration field varies smoothly from one node to the next. The coefficients <span class="math notranslate nohighlight">\(M_{ij}\)</span> then no longer multiply different unknowns; they factor out and add up to a single row sum:</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_{j=1}^{n_n} M_{ij} \mathbf{a}_j \approx \sum_{j=1}^{n_n} M_{ij} \mathbf{a}_i = \bigg( \sum_{j=1}^{n_n} M_{ij} \bigg) \mathbf{a}_i = m_i \mathbf{a}_i
+\]</div>
+<p>The row sum <span class="math notranslate nohighlight">\(m_i\)</span> is called the lumped nodal mass: the whole mass of row <span class="math notranslate nohighlight">\(i\)</span> is collected — “lumped” — at the node itself, so no mass is lost. Applying the same approximation to every row of the linear system replaces the full mass matrix by a diagonal matrix holding the row sums <span class="math notranslate nohighlight">\(m_i\)</span>, while the unknowns and the right-hand side stay exactly the same:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix} m_1 &amp; 0 &amp; \cdots &amp; 0 \\ 0 &amp; m_2 &amp; \cdots &amp; 0 \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \cdots &amp; m_{n_n} \end{bmatrix}
+\begin{bmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_{n_n} \end{bmatrix}
+=
+\begin{bmatrix} \mathbf{F}_1^{int} + \mathbf{F}_1^{ext} \\ \mathbf{F}_2^{int} + \mathbf{F}_2^{ext} \\ \vdots \\ \mathbf{F}_{n_n}^{int} + \mathbf{F}_{n_n}^{ext} \end{bmatrix}
+\end{split}\]</div>
+<p>Compare the two systems: the off-diagonal coefficients that tied each equation to the neighbouring nodes are gone, so every row now contains a single unknown. The simultaneous solve is no longer needed — each nodal acceleration follows from its own row by a division:</p>
+<div class="math notranslate nohighlight">
+\[
+m_i \mathbf{a}_i = \mathbf{F}_i^{int} + \mathbf{F}_i^{ext} \qquad \Rightarrow \qquad \mathbf{a}_i = \dfrac{\mathbf{F}_i^{int} + \mathbf{F}_i^{ext}}{m_i}
+\]</div>
+<p>Lumping approximates the inertia, but it conserves the total mass and is what makes the explicit MPM update inexpensive. It has a further practical advantage: the lumped mass never has to be assembled from <span class="math notranslate nohighlight">\(M_{ij}\)</span> at all. Substituting the definition <span class="math notranslate nohighlight">\(M_{ij} = \sum_{p} N_i(\mathbf{x}_p) N_j(\mathbf{x}_p) M_p\)</span> into the row sum and swapping the order of the two sums,</p>
+<div class="math notranslate nohighlight">
+\[
+m_i = \sum_{j=1}^{n_n} M_{ij} = \sum_{j=1}^{n_n} \sum_{p=1}^{n_p} N_i(\mathbf{x}_p) N_j(\mathbf{x}_p) M_p = \sum_{p=1}^{n_p} N_i(\mathbf{x}_p) M_p \underbrace{\sum_{j=1}^{n_n} N_j(\mathbf{x}_p)}_{=\,1} = \sum_{p=1}^{n_p} N_i(\mathbf{x}_p) M_p
+\]</div>
+<p>because the shape functions sum to one at any position (<em>partition of unity</em>). The result has a simple physical meaning: each material point hands its mass <span class="math notranslate nohighlight">\(M_p\)</span> to the nodes of the cell containing it, in proportion to the shape function values at its position. This is exactly how the algorithm in the next section begins every time step — the particle mass is mapped directly to the nodes, and the matrix <span class="math notranslate nohighlight">\(M_{ij}\)</span> is never formed.</p>
+</section>
+<section id="time-integration-and-numerical-implementation">
+<h2>Time integration and numerical implementation<a class="headerlink" href="#time-integration-and-numerical-implementation" title="Link to this heading">#</a></h2>
+<p>In order to obtain the fully discrete form of the governing equations, semi-discrete equation must be discretized in time. MPM is well known for its explicit dynamic formulation: the nodal velocities are advanced with a forward Euler step, and the material point positions are then updated using the newly computed velocities. It follows that the nodal acceleration in the semi-discrete equation is solved explicitly using the known internal and external forces at the current configuration at time <span class="math notranslate nohighlight">\(t\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[
+m_i^t \mathbf{a}_i^t = \mathbf{F}_i^{t,int} +\mathbf{F}_i^{t,ext}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(m_i^t\)</span> is the lumped mass at the nodes.</p>
+<p>The nodal velocity at the next time step, <span class="math notranslate nohighlight">\(\mathbf{v}_i^{t+\Delta t}\)</span>, is computed as</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{v}_i^{t+\Delta t} = \mathbf{v}_i^t + \Delta t \hspace{3pt} \mathbf{a}_i^t
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time increment.</p>
+<p>The explicit time integration is computationally convenient. However, it is a conditionally stable scheme which restricts the time step size to ensure numerical stability. Consequently, the time step must satisfy the Courant–Friedrichs–Lewy (CFL) condition. This is a necessary condition for convergence in explicit time marching numerical methods.</p>
+<p>For one dimensional case, the CFL condition has the following form,</p>
+<div class="math notranslate nohighlight">
+\[
+C = \dfrac{c \Delta t}{\Delta x} \leq C_{max}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(c\)</span> is the characteristic wave speed,  <span class="math notranslate nohighlight">\(\Delta x\)</span> is the spacing of the grid, <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time step size and <span class="math notranslate nohighlight">\(C_{max}\)</span> is the maximum Courant number which is unity for most explicit methods.</p>
+<p>In order to solve the fully discrete form and velocity update equation at the grid nodes,  mass and velocity carried by the material points must be transferred to the background grid. At the beginning of each Lagrangian time step,  particle mass is mapped to the nodes using</p>
+<div class="math notranslate nohighlight">
+\[
+m_i^t = \sum_{p=1}^{n_p} N_i(\mathbf{x}_p^t) M_p
+\]</div>
+<p>Nodal velocity at each time step is computed by mapping particle momentum as</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{v}_i^t = \dfrac{\sum_{p=1}^{n_p}M_p \mathbf{v}_p^t N_i(\mathbf{x}_p^t)}{m_i^t}
+\]</div>
+<p>With acceleration, <span class="math notranslate nohighlight">\(\mathbf{a}_i^t\)</span> solved at the nodes using fully discrete form equation, the material points are updated while the grid is assumed to move with the computed velocity field. Moving of material points through the grid completes the Lagrangian description used in the MPM formulation.</p>
+<p>Finally, the velocity and the position of material points are updated by</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{v}_p^{t + \Delta t} = \mathbf{v}_p^t + \Delta t \hspace{3pt} \sum_{i=1}^{n_n}N_i(\mathbf{x}_p^t) \mathbf{a}_i^t
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{x}_p^{t + \Delta t} = \mathbf{x}_p^t + \Delta t \hspace{3pt} \sum_{i=1}^{n_n}N_i(\mathbf{x}_p^t) \mathbf{v}_i^{t + \Delta t}
+\]</div>
+<p>It should be noted from the internal force equation that the stress is carried by the material points; the strain is stored there as well. This implies that the constitutive equations are applied at the material points. As a result, following the history of deformation is convenient in MPM. Similarly, the external body forces are also applied at the material points as in the external force equation.</p>
+</section>
+<section id="conservation-properties">
+<h2>Conservation properties<a class="headerlink" href="#conservation-properties" title="Link to this heading">#</a></h2>
+<p>MPM automatically satisfies the mass conservation by assigning a constant mass to each material point.
+The momentum balance is enforced in governing equations.
+However, Bardenhagen (2002) showed that the original MPM formulation does not satisfy the energy conservation explicitly.
+It was found that the energy conservation in MPM is strongly dependent on which of the two stress update algorithms — Update Stress First (USF) or Update Stress Last (USL), described in the following sections — is used at the material points.</p>
+<p>[1] Bardenhagen, S. G. (2002). Energy conservation error in the material point method for solid mechanics. Journal of Computational Physics, 180(1), 383–403.</p>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to learn MPM with Python</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="mpm-schemes.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">MPM stress update schemes</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motion-of-deformable-body">Motion of deformable body</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#governing-equations">Governing equations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-form-and-spatial-discretisation">Weak form and spatial discretisation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-integration-and-numerical-implementation">Time integration and numerical implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conservation-properties">Conservation properties</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Kumar, Shyamini Kularathna
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
