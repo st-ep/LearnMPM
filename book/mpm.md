@@ -209,7 +209,7 @@ $$
 
 The fixed mass, $M_p$, of the material points implies that the equation of conservation of mass is automatically satisfied. 
 
-Following the finite element method, the weak form of the linear momentum balance equation is obtained by multiplying the momentum conservation equation by a test function (also called a weight function), $\mathbf{w}$, and integrating over the current configuration, $\Omega$. At every instant $t$, the velocity field is sought in the trial space $\mathcal{V}$ and the test function is an arbitrary member of the test space $\mathcal{V}_0$,
+Following the finite element method, the weak form of the linear momentum balance equation is obtained by multiplying the momentum conservation equation by a test function, $\mathbf{w}$, and integrating over the current configuration, $\Omega$. At every instant $t$, the velocity field is sought in the trial space $\mathcal{V}$ and the test function is an arbitrary member of the test space $\mathcal{V}_0$,
 
 $$
 \mathcal{V} = \left\{ \mathbf{v} \in H^1(\Omega) \; : \; \mathbf{v} = \bar{\mathbf{v}} \;\; \text{on} \;\; \partial \Omega_u \right\}, \qquad
